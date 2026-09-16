@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Profile - SLUC ROTCU</title>
+<link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <img src="../assets/images/logo.png" alt="logo">
+    <h1>DMMMSU SLUC ROTC UNIT</h1>
+  </div>
+  <div class="actions"><div class="avatar">&#128100;</div></div>
+</header>
+
+<div class="layout">
+  <aside class="sidebar">
+    <nav>
+      <a href="home.html">&#127968; HOME</a>
+      <a href="attendance.html">&#128197; ATTENDANCE</a>
+      <a href="profile.html" class="active">&#128100; PROFILE</a>
+      <a href="about.html">&#8505; ABOUT US</a>
+      <a href="#" id="logoutLink">&#8630; LOG OUT</a>
+    </nav>
+    <footer>&copy; JUHAIR D. MORAD<br>BSCS STUDENT</footer>
+  </aside>
+
+  <main class="content">
+    <h2>PROFILE PAGE</h2>
+    <div class="panel" id="detail">Loading...</div>
+    <button class="btn btn-gold" id="editBtn">EDIT INFO</button>
+    <button class="btn btn-gold" id="saveBtn" style="display:none;">SAVE</button>
+  </main>
+</div>
+
+<script src="../assets/js/config.js"></script>
+<script src="../assets/js/api.js"></script>
+<script src="../assets/js/auth.js"></script>
+<script>
+const admin = Session.requireRole("admin", "login.html");
+document.getElementById("logoutLink").addEventListener("click", () => { Session.clear(); location.href="login.html"; });
+
+const fields = ["name","birthday","course","address","cp","beneficiary","bloodType","email","id"];
+let current = {};
+
+async function load() {
+  current = (await API.getProfile(admin.id)).profile;
+  render(false);
+}
+function render(editable) {
+  document.getElementById("detail").innerHTML = fields.map(f => `
+    <div class="form-row">
+      <label>${f}</label>
+      <input data-f="${f}" value="${current[f] || ''}" ${editable ? '' : 'disabled'}>
+    </div>`).join("");
+}
+document.getElementById("editBtn").addEventListener("click", () => {
+  render(true);
+  document.getElementById("editBtn").style.display = "none";
+  document.getElementById("saveBtn").style.display = "inline-block";
+});
+document.getElementById("saveBtn").addEventListener("click", async () => {
+  const inputs = document.querySelectorAll("#detail input");
+  const updated = {};
+  inputs.forEach(i => updated[i.dataset.f] = i.value);
+  await API.updateProfile(admin.id, updated);
+  current = updated;
+  render(false);
+  document.getElementById("editBtn").style.display = "inline-block";
+  document.getElementById("saveBtn").style.display = "none";
+});
+load();
+</script>
+</body>
+</html>

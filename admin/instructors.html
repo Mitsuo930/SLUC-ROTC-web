@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Instructors & Officers - SLUC ROTCU</title>
+<link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <img src="../assets/images/logo.png" alt="logo">
+    <h1>DMMMSU SLUC ROTC UNIT</h1>
+  </div>
+  <div class="actions"><div class="avatar">&#128100;</div></div>
+</header>
+
+<div class="layout">
+  <aside class="sidebar">
+    <nav>
+      <a href="home.html" class="active">&#127968; HOME</a>
+      <a href="attendance.html">&#128197; ATTENDANCE</a>
+      <a href="profile.html">&#128100; PROFILE</a>
+      <a href="about.html">&#8505; ABOUT US</a>
+      <a href="#" id="logoutLink">&#8630; LOG OUT</a>
+    </nav>
+    <footer>&copy; JUHAIR D. MORAD<br>BSCS STUDENT</footer>
+  </aside>
+
+  <main class="content">
+    <h2>INSTRUCTORS &amp; OFFICERS</h2>
+    <div class="panel">
+      <table id="instrTable">
+        <thead><tr><th>Rank</th><th>Name</th><th>CP#</th><th>Address</th><th>Role</th></tr></thead>
+        <tbody><tr><td colspan="5">Loading...</td></tr></tbody>
+      </table>
+      <br>
+      <button class="btn btn-gold" id="addBtn">+ Add Instructor/Officer</button>
+    </div>
+  </main>
+</div>
+
+<script src="../assets/js/config.js"></script>
+<script src="../assets/js/api.js"></script>
+<script src="../assets/js/auth.js"></script>
+<script>
+Session.requireRole("admin", "login.html");
+document.getElementById("logoutLink").addEventListener("click", () => { Session.clear(); location.href="login.html"; });
+
+async function load() {
+  const { instructors } = await API.getInstructors();
+  document.querySelector("#instrTable tbody").innerHTML = instructors.map(i => `
+    <tr><td>${i.rank}</td><td>${i.name}</td><td>${i.cp}</td><td>${i.address}</td><td>${i.role}</td></tr>
+  `).join("");
+}
+document.getElementById("addBtn").addEventListener("click", async () => {
+  const rank = prompt("Rank:"); if (!rank) return;
+  const name = prompt("Name:");
+  const cp = prompt("CP#:");
+  const address = prompt("Address:");
+  const role = prompt("Role:");
+  await API.addOrUpdateInstructor({ rank, name, cp, address, role });
+  load();
+});
+load();
+</script>
+</body>
+</html>

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>About Us - SLUC ROTCU</title>
+<link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <img src="../assets/images/logo.png" alt="logo">
+    <h1>DMMMSU SLUC ROTC UNIT</h1>
+  </div>
+  <div class="actions"><div class="avatar">&#128100;</div></div>
+</header>
+
+<div class="layout">
+  <aside class="sidebar">
+    <nav>
+      <a href="home.html">&#127968; HOME</a>
+      <a href="attendance.html">&#128197; ATTENDANCE</a>
+      <a href="profile.html">&#128100; PROFILE</a>
+      <a href="about.html" class="active">&#8505; ABOUT US</a>
+      <a href="#" id="logoutLink">&#8630; LOG OUT</a>
+    </nav>
+    <footer>&copy; JUHAIR D. MORAD<br>BSCS STUDENT</footer>
+  </aside>
+
+  <main class="content">
+    <h2>ABOUT US</h2>
+    <div class="panel">
+      <p style="text-align:center;font-weight:700;">
+        DON MARIANO MARCOS MEMORIAL STATE UNIVERSITY-<br>
+        SOUTH LA UNION CAMPUS<br>
+        RESERVE OFFICER TRAINING CORPS (ROTC)
+      </p>
+      <p>103rd CDC, 1RCDG, RESCOM, PA. Committed to training disciplined, patriotic, and leadership-driven cadets.</p>
+      <p>System developed by Juahir D. Morad — BSCS Student</p>
+    </div>
+  </main>
+</div>
+
+<script src="../assets/js/auth.js"></script>
+<script>
+Session.requireRole("student", "login.html");
+document.getElementById("logoutLink").addEventListener("click", () => { Session.clear(); location.href="login.html"; });
+</script>
+</body>
+</html>

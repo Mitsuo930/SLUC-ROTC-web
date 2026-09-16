@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Enrolled Students - SLUC ROTCU</title>
+<link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <img src="../assets/images/logo.png" alt="logo">
+    <h1>DMMMSU SLUC ROTC UNIT</h1>
+  </div>
+  <div class="actions"><div class="avatar">&#128100;</div></div>
+</header>
+
+<div class="layout">
+  <aside class="sidebar">
+    <nav>
+      <a href="home.html" class="active">&#127968; HOME</a>
+      <a href="attendance.html">&#128197; ATTENDANCE</a>
+      <a href="profile.html">&#128100; PROFILE</a>
+      <a href="about.html">&#8505; ABOUT US</a>
+      <a href="#" id="logoutLink">&#8630; LOG OUT</a>
+    </nav>
+    <footer>&copy; JUHAIR D. MORAD<br>BSCS STUDENT</footer>
+  </aside>
+
+  <main class="content">
+    <h2>ENROLLED STUDENT INFORMATION</h2>
+    <div class="panel">
+      <table id="studentTable">
+        <thead><tr>
+          <th>ID</th><th>Name</th><th>Address</th><th>Course</th>
+          <th>Beneficiary</th><th>CP#</th><th>Email</th><th>Status</th><th></th>
+        </tr></thead>
+        <tbody><tr><td colspan="9">Loading...</td></tr></tbody>
+      </table>
+    </div>
+  </main>
+</div>
+
+<script src="../assets/js/config.js"></script>
+<script src="../assets/js/api.js"></script>
+<script src="../assets/js/auth.js"></script>
+<script>
+Session.requireRole("admin", "login.html");
+document.getElementById("logoutLink").addEventListener("click", () => { Session.clear(); location.href="login.html"; });
+
+async function load() {
+  const { students } = await API.getStudents();
+  const body = document.querySelector("#studentTable tbody");
+  body.innerHTML = students.map(s => `
+    <tr>
+      <td>${s.id}</td><td>${s.name}</td><td>${s.address}</td><td>${s.course}</td>
+      <td>${s.beneficiary}</td><td>${s.cp}</td><td>${s.email}</td>
+      <td>${s.status}</td>
+      <td>${s.status === "Pending"
+          ? `<button class="btn btn-gold" onclick="approve('${s.id}')">Approve</button>`
+          : "Approved"}</td>
+    </tr>`).join("");
+}
+async function approve(id) {
+  await API.updateStudent(id, { status: "Approved" });
+  load();
+}
+load();
+</script>
+</body>
+</html>

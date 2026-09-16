@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Home - SLUC ROTCU</title>
+<link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <img src="../assets/images/logo.png" alt="logo">
+    <h1>DMMMSU SLUC ROTC UNIT</h1>
+  </div>
+  <div class="actions"><div class="avatar">&#128100;</div></div>
+</header>
+
+<div class="layout">
+  <aside class="sidebar">
+    <nav>
+      <a href="home.html" class="active">&#127968; HOME</a>
+      <a href="attendance.html">&#128197; ATTENDANCE</a>
+      <a href="profile.html">&#128100; PROFILE</a>
+      <a href="about.html">&#8505; ABOUT US</a>
+      <a href="#" id="logoutLink">&#8630; LOG OUT</a>
+    </nav>
+    <footer>&copy; JUHAIR D. MORAD<br>BSCS STUDENT</footer>
+  </aside>
+
+  <main class="content">
+    <h2>HOME PAGE</h2>
+    <div class="panel">
+      <h3>ANNOUNCEMENT</h3>
+      <div id="announcements">Loading...</div>
+    </div>
+  </main>
+</div>
+
+<script src="../assets/js/config.js"></script>
+<script src="../assets/js/api.js"></script>
+<script src="../assets/js/auth.js"></script>
+<script>
+Session.requireRole("student", "login.html");
+document.getElementById("logoutLink").addEventListener("click", () => { Session.clear(); location.href="login.html"; });
+
+API.getAnnouncements().then(res => {
+  document.getElementById("announcements").innerHTML =
+    (res.announcements || []).map(a => `<p>${a}</p>`).join("") || "No announcements yet.";
+}).catch(() => { document.getElementById("announcements").textContent = "Could not load announcements."; });
+</script>
+</body>
+</html>

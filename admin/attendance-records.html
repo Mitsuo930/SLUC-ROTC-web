@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Attendance Record - SLUC ROTCU</title>
+<link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <img src="../assets/images/logo.png" alt="logo">
+    <h1>DMMMSU SLUC ROTC UNIT</h1>
+  </div>
+  <div class="actions"><div class="avatar">&#128100;</div></div>
+</header>
+
+<div class="layout">
+  <aside class="sidebar">
+    <nav>
+      <a href="home.html">&#127968; HOME</a>
+      <a href="attendance.html" class="active">&#128197; ATTENDANCE</a>
+      <a href="profile.html">&#128100; PROFILE</a>
+      <a href="about.html">&#8505; ABOUT US</a>
+      <a href="#" id="logoutLink">&#8630; LOG OUT</a>
+    </nav>
+    <footer>&copy; JUHAIR D. MORAD<br>BSCS STUDENT</footer>
+  </aside>
+
+  <main class="content">
+    <h2>ATTENDANCE PAGE</h2>
+    <div class="panel">
+      <h3>Attendance Record</h3>
+      <table id="attTable">
+        <thead><tr><th>ID</th><th>Name</th><th>Date</th><th>Time In</th><th>Time Out</th></tr></thead>
+        <tbody><tr><td colspan="5">Loading...</td></tr></tbody>
+      </table>
+    </div>
+  </main>
+</div>
+
+<script src="../assets/js/config.js"></script>
+<script src="../assets/js/api.js"></script>
+<script src="../assets/js/auth.js"></script>
+<script>
+Session.requireRole("admin", "login.html");
+document.getElementById("logoutLink").addEventListener("click", () => { Session.clear(); location.href="login.html"; });
+
+API.getAttendance().then(({ records }) => {
+  document.querySelector("#attTable tbody").innerHTML = records.map(r => `
+    <tr><td>${r.studentId}</td><td>${r.name||""}</td><td>${r.date}</td><td>${r.timeIn||""}</td><td>${r.timeOut||""}</td></tr>
+  `).join("");
+});
+</script>
+</body>
+</html>

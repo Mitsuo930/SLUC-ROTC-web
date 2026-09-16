@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Attendance - SLUC ROTCU</title>
+<link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <img src="../assets/images/logo.png" alt="logo">
+    <h1>DMMMSU SLUC ROTC UNIT</h1>
+  </div>
+  <div class="actions"><div class="avatar">&#128100;</div></div>
+</header>
+
+<div class="layout">
+  <aside class="sidebar">
+    <nav>
+      <a href="home.html">&#127968; HOME</a>
+      <a href="attendance.html" class="active">&#128197; ATTENDANCE</a>
+      <a href="profile.html">&#128100; PROFILE</a>
+      <a href="about.html">&#8505; ABOUT US</a>
+      <a href="#" id="logoutLink">&#8630; LOG OUT</a>
+    </nav>
+    <footer>&copy; JUHAIR D. MORAD<br>BSCS STUDENT</footer>
+  </aside>
+
+  <main class="content">
+    <h2>ATTENDANCE PAGE</h2>
+    <button class="btn btn-gold" id="timeInBtn">Open Camera for Time-In</button><br><br>
+    <button class="btn btn-gold" id="timeOutBtn">Open Camera for Time-Out</button>
+
+    <div id="reader" style="width:340px;margin-top:24px;"></div>
+    <p id="msg" class="msg-box"></p>
+  </main>
+</div>
+
+<script src="../assets/js/config.js"></script>
+<script src="../assets/js/api.js"></script>
+<script src="../assets/js/auth.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
+<script>
+const student = Session.requireRole("student", "login.html");
+document.getElementById("logoutLink").addEventListener("click", () => { Session.clear(); location.href="login.html"; });
+
+let html5QrCode;
+function startScan() {
+  const msg = document.getElementById("msg");
+  html5QrCode = new Html5Qrcode("reader");
+  html5QrCode.start(
+    { facingMode: "environment" },
+    { fps: 10, qrbox: 250 },
+    async (decodedText) => {
+      await html5QrCode.stop();
+      try {
+        const res = await API.recordAttendance(student.id, decodedText);
+        msg.textContent = res.message || "Attendance recorded!";
+        msg.className = "msg-box msg-ok";
+      } catch (err) {
+        msg.textContent = err.message;
+        msg.className = "msg-box msg-error";
+      }
+    }
+  ).catch(err => { msg.textContent = "Camera error: " + err; msg.className = "msg-box msg-error"; });
+}
+
+document.getElementById("timeInBtn").addEventListener("click", startScan);
+document.getElementById("timeOutBtn").addEventListener("click", startScan);
+</script>
+</body>
+</html>

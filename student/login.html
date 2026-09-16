@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Log In - SLUC ROTCU</title>
+<link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body class="center-page">
+
+<div class="form-card">
+  <img src="../assets/images/logo.png" alt="ROTC seal" class="brand-logo">
+  <h2 style="text-align:center;">Welcome to DMMMSU ROTC Unit</h2>
+  <form id="loginForm">
+    <div class="form-row"><label>Email/ID</label><input type="text" id="idOrEmail" required></div>
+    <div class="form-row"><label>Password</label><input type="password" id="password" required></div>
+    <div style="text-align:center;">
+      <button type="submit" class="btn btn-gold">Log In</button>
+      <a href="enroll.html" class="btn btn-outline">Enroll</a>
+    </div>
+    <p id="msg" class="msg-box"></p>
+  </form>
+</div>
+
+<script src="../assets/js/config.js"></script>
+<script src="../assets/js/api.js"></script>
+<script src="../assets/js/auth.js"></script>
+<script>
+document.getElementById("loginForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const msg = document.getElementById("msg");
+  try {
+    const res = await API.loginStudent(idOrEmail.value, password.value);
+    if (res.status === "Pending") {
+      msg.textContent = "Wait for your account to be approved.";
+      msg.className = "msg-box msg-error";
+      return;
+    }
+    Session.set(res.student, "student");
+    window.location.href = "home.html";
+  } catch (err) {
+    msg.textContent = err.message;
+    msg.className = "msg-box msg-error";
+  }
+});
+</script>
+</body>
+</html>
